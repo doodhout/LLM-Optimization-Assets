@@ -813,6 +813,231 @@ Instead of "Development Helper Agent," create:
 
 > "Keep agents under 500 tokens. I tested this extensively and longer prompts didn't help, they hurt." - Power user insight
 
+## Advanced: Skills Auto-Activation with Hooks
+
+### The Problem with Manual Skill Invocation
+
+Skills in Claude Code are powerful for maintaining consistency, but they face a fundamental challenge: Claude won't use them unless explicitly prompted. You might have comprehensive skills for frontend development, backend patterns, and database operations, but if Claude doesn't activate them, they're just unused documentation.
+
+**Common frustrations:**
+- Created detailed skills that sit unused
+- Having to manually remind Claude to check skills
+- Inconsistent application of guidelines
+- Skills only work when you remember to invoke them
+
+### The Solution: Automated Skill Activation
+
+**The game-changer:** Use Claude Code's hook system to automatically detect when skills are relevant and inject reminders into Claude's context.
+
+**How it works:**
+
+**1. UserPromptSubmit Hook** (runs BEFORE Claude sees your message):
+- Analyzes your prompt for keywords and intent patterns
+- Checks which skills might be relevant based on file paths, content patterns, and task type
+- Injects a formatted reminder into Claude's context
+- Claude now sees "🎯 SKILL ACTIVATION CHECK - Use [skill-name]" before reading your question
+
+**2. Stop Event Hook** (runs AFTER Claude finishes responding):
+- Analyzes which files were edited
+- Checks for risky patterns (try-catch blocks, database operations, async functions)
+- Displays gentle self-check reminders
+- Non-blocking awareness system that keeps quality high
+
+**3. skill-rules.json Configuration:**
+
+Create a central configuration file defining skill triggers:
+
+```json
+{
+  "backend-dev-guidelines": {
+    "type": "domain",
+    "enforcement": "suggest",
+    "priority": "high",
+    "promptTriggers": {
+      "keywords": ["backend", "controller", "service", "API", "endpoint"],
+      "intentPatterns": [
+        "(create|add).*?(route|endpoint|controller)",
+        "(how to|best practice).*?(backend|API)"
+      ]
+    },
+    "fileTriggers": {
+      "pathPatterns": ["backend/src/**/*.ts"],
+      "contentPatterns": ["router\\.", "export.*Controller"]
+    }
+  },
+  "frontend-dev-guidelines": {
+    "type": "domain",
+    "enforcement": "suggest",
+    "priority": "high",
+    "promptTriggers": {
+      "keywords": ["react", "component", "frontend", "UI", "layout"],
+      "intentPatterns": [
+        "(create|build|implement).*?(component|page|view)",
+        "(style|design|layout).*?(issue|problem|fix)"
+      ]
+    },
+    "fileTriggers": {
+      "pathPatterns": ["src/components/**/*.tsx", "src/pages/**/*.tsx"],
+      "contentPatterns": ["import.*react", "export.*function.*Component"]
+    }
+  }
+}
+```
+
+**Real-world results:**
+- Skills automatically activate based on context
+- Consistent patterns across entire codebase
+- No more manual skill reminders needed
+- Self-correction built into workflow
+- 40-60% improvement in token efficiency (using progressive disclosure)
+
+**Community insight:**
+> "I created comprehensive skills but Claude never used them. After implementing the auto-activation hook system, it's night and day. Skills actually work now." - 6-month Claude Code power user
+
+### Progressive Disclosure for Skills
+
+**Following Anthropic's best practices:**
+
+Keep main SKILL.md files under 500 lines and use progressive disclosure with resource files:
+
+```
+skills/
+├── frontend-dev-guidelines/
+│   ├── SKILL.md (398 lines - main file)
+│   └── resources/
+│       ├── react-patterns.md
+│       ├── tanstack-query.md
+│       ├── tanstack-router.md
+│       ├── mui-components.md
+│       └── testing-guidelines.md
+└── backend-dev-guidelines/
+    ├── SKILL.md (304 lines - main file)
+    └── resources/
+        ├── route-patterns.md
+        ├── controller-structure.md
+        ├── service-layer.md
+        ├── repository-pattern.md
+        └── error-handling.md
+```
+
+**Benefits:**
+- Claude loads lightweight main file initially
+- Only pulls detailed resource files when needed
+- Token efficiency improved 40-60% for most queries
+- Faster skill activation
+- Better context window management
+
+### Hooks for Quality Assurance
+
+**Build Quality Checks into Your Workflow:**
+
+**Hook: Build Error Checker**
+```typescript
+// Runs after Claude responds
+// Checks which repos were modified
+// Automatically runs build scripts
+// Shows errors to Claude for immediate fixing
+// Result: Zero errors left behind
+```
+
+**Hook: Error Handling Reminder**
+```typescript
+// Detects risky patterns in edited files:
+// - try-catch blocks
+// - async operations
+// - database calls
+// - controller methods
+// Shows gentle reminder about error handling
+// Claude self-assesses and fixes if needed
+```
+
+**Example output:**
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 ERROR HANDLING SELF-CHECK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️  Backend Changes Detected
+   2 file(s) edited
+
+   ❓ Did you add error logging in catch blocks?
+   ❓ Are database operations wrapped in error handling?
+
+   💡 Backend Best Practice:
+      - All errors should be logged appropriately
+      - Controllers should extend BaseController
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**Why hooks matter:**
+- Consistent quality without manual checking
+- Catches issues before you see them
+- Non-blocking gentle reminders
+- Creates self-correcting workflow
+- Prevents technical debt accumulation
+
+**Note on automatic formatting hooks:**
+While automatic Prettier formatting seems convenient, be aware that file modifications trigger system reminders that can consume significant context tokens (potentially 160k+ tokens over just a few rounds in worst-case scenarios). Consider running formatters manually between sessions instead.
+
+## Specialized Agent Examples from Production Use
+
+### Real-World Agent Arsenal
+
+Here are examples of specialized agents battle-tested over 6 months on a 300k+ LOC production rewrite:
+
+**Quality Control Agents:**
+- **code-architecture-reviewer:** Reviews code for best practices adherence and architectural consistency
+- **build-error-resolver:** Systematically fixes TypeScript errors using project patterns
+- **refactor-planner:** Creates comprehensive refactoring plans with risk assessment
+
+**Testing & Debugging Agents:**
+- **auth-route-tester:** Tests backend routes with authentication tokens
+- **auth-route-debugger:** Debugs 401/403 errors and route configuration issues
+- **frontend-error-fixer:** Diagnoses and fixes frontend errors with stack trace analysis
+
+**Planning & Strategy Agents:**
+- **strategic-plan-architect:** Creates detailed implementation plans with phases, tasks, risks, and timelines
+- **plan-reviewer:** Reviews implementation plans before execution for gaps and risks
+- **documentation-architect:** Creates and updates architecture documentation
+
+**Specialized Domain Agents:**
+- **frontend-ux-designer:** Fixes styling and UX issues with design system knowledge
+- **web-research-specialist:** Researches technical issues and current best practices
+- **workflow-developer:** Implements complex workflow engine patterns
+
+**Key insight:** The more specific the agent's role, the better it performs. One focused agent beats one generalist every time.
+
+### Slash Commands for Agent Workflows
+
+**Integrating agents into daily workflow:**
+
+Create slash commands that trigger specialized agents with proper context:
+
+```markdown
+# .claude/commands/code-review.md
+Launch the code-architecture-reviewer agent to review recent changes.
+Provide it with the files modified in the last commit and ask for:
+- Architectural consistency check
+- Best practices adherence
+- Security issue identification
+- Performance concerns
+- Code quality rating (1-10)
+```
+
+```markdown
+# .claude/commands/build-and-fix.md
+Run build scripts for all modified repositories and launch the
+build-error-resolver agent if errors are found. Continue until
+all builds pass successfully.
+```
+
+**Benefits:**
+- One command triggers complete workflow
+- Consistent agent invocation
+- Proper context loading
+- Repeatable processes
+- Team-sharable workflows
+
 ## Conclusion
 
 Effective agent definitions:
@@ -823,6 +1048,15 @@ Effective agent definitions:
 - Set clear boundaries
 - Stay focused and concise
 
+**Advanced techniques:**
+- Use hooks for automatic skill activation
+- Implement progressive disclosure for efficiency
+- Build quality checks into your workflow
+- Create specialized agents for specific domains
+- Integrate with slash commands for repeatability
+
 **The golden rule:** Each agent should be **so specialized** that you can describe its purpose in one sentence, yet **comprehensive enough** that it consistently produces professional-quality output for that specific purpose.
+
+**The automation principle:** If you find yourself manually reminding Claude to check guidelines or follow patterns, build a hook to automate it. Your workflow should enforce quality automatically, not rely on remembering to ask.
 
 Start simple, test with real work, and refine based on results. The best agent definition is one that makes you trust the agent's output enough to use it with minimal review.

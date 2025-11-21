@@ -1033,6 +1033,211 @@ Poor: <70% (Errors derail the conversation)
 - Errors cause confusion
 - Claude asks for same information repeatedly
 
+## Productivity Tools for Claude Code Workflows
+
+### Voice-to-Text Tools
+
+**SuperWhisper (macOS)**
+- **Purpose:** Voice-to-text for prompting when typing fatigue sets in
+- **Why it's useful:** Long prompting sessions can cause hand strain
+- **How Claude handles it:** Surprisingly well with rambling voice-to-text
+- **Use case:** Complex explanations, planning sessions, design discussions
+
+**Benefits:**
+- Reduce typing fatigue
+- Faster for long explanations
+- Natural for exploratory prompts
+- Good for accessibility
+
+**Tips:**
+- Use for planning and discussion, not code generation
+- Review and edit transcription before sending
+- Especially helpful after hours of intensive coding
+
+### Memory MCP for Decisions
+
+**Official @modelcontextprotocol/server-memory**
+
+**What it's good for:**
+- Tracking project-specific decisions
+- Architectural choices that don't belong in skills
+- Temporary preferences for current work session
+- Context that spans conversations
+
+**What it's less useful for (with skills system):**
+- Coding patterns → Use skills instead
+- Best practices → Use skills instead
+- Project conventions → Use CLAUDE.md instead
+
+**When to use Memory MCP:**
+```
+Good uses:
+- "Remember we decided to migrate to PostgreSQL next quarter"
+- "I prefer the verbose logging for this debug session"
+- "We're using the blue theme variant for this client"
+
+Better in skills:
+- "Remember to always use async/await" → backend-dev-guidelines skill
+- "React components should use hooks" → frontend-dev-guidelines skill
+```
+
+**Community insight:**
+> "I use Memory MCP less now that skills handle most pattern-remembering work. But it's still useful for tracking decisions and architectural choices that don't belong in skills." - 6-month power user
+
+### Keyboard and Automation Tools
+
+**BetterTouchTool (macOS)**
+
+**Game-changing automations:**
+
+**1. Relative URL copy from IDE to Claude Code:**
+- Double-tap CAPS LOCK
+- BTT inputs the IDE's copy-relative-URL shortcut
+- Transforms clipboard by prepending '@' symbol
+- Focuses terminal window
+- Pastes the file path
+
+**Benefit:** Instantly reference files from VSCode/Cursor in Claude Code without manual navigation.
+
+**2. Double-tap app focus hotkeys:**
+- CMD+CMD → Focus Claude Code terminal
+- OPT+OPT → Focus Browser
+- CTRL+CTRL → Focus IDE
+
+**Benefit:** No fumbling between windows. Time savings add up significantly.
+
+**3. Custom gestures for common actions:**
+- Trackpad gestures for copy/paste operations
+- Quick text expansions for common commands
+- Automated clipboard transformations
+
+**Community insight:**
+> "The time savings on just not fumbling between apps is worth the BTT purchase alone. I set up custom gestures for Claude Code workflows and it feels seamless now." - Production user
+
+### Utility Scripts for Everything
+
+**Philosophy: If it's tedious, script it.**
+
+**Common automation candidates:**
+
+**1. Test data generation:**
+```bash
+# Generate mock data without manual form filling
+node scripts/generate-test-data.js --count 50 --type user
+```
+
+**2. Authentication testing:**
+```bash
+# Get auth tokens and test routes
+node scripts/test-auth-route.js <url>
+```
+
+**3. Database operations:**
+```bash
+# Reset and seed dev database
+node scripts/db-reset-and-seed.js --env dev
+
+# Create database backup
+node scripts/db-backup.js --timestamp
+
+# Restore from backup
+node scripts/db-restore.js --file backup-2024-01-15.sql
+```
+
+**4. Schema diff checking:**
+```bash
+# Check for schema drift before migrations
+node scripts/check-schema-diff.js
+```
+
+**5. Automated environment setup:**
+```bash
+# Set up complete dev environment
+./scripts/setup-dev-env.sh
+```
+
+**Pro tip: Document scripts in CLAUDE.md or skills**
+
+When Claude helps you write a useful script:
+
+**Option 1: Reference in CLAUDE.md**
+```markdown
+## Useful Scripts
+- `node scripts/test-auth-route.js <url>` - Test authenticated endpoints
+- `node scripts/generate-test-data.js` - Generate mock data
+- `npm run db:reset` - Reset database to clean state
+```
+
+**Option 2: Attach to relevant skill**
+```markdown
+# backend-dev-guidelines skill
+
+## Testing Authenticated Routes
+Use the provided test-auth-route.js script:
+```bash
+node scripts/test-auth-route.js http://localhost:3002/api/endpoint
+```
+
+This handles all auth complexity for you.
+```
+
+**Benefits:**
+- Claude knows scripts exist
+- No reinventing tools each session
+- Consistent across team
+- Executable documentation
+- Future you will thank past you
+
+### Development Environment Enhancements
+
+**Multiple monitors setup:**
+- Monitor 1: IDE (VSCode/Cursor) for finding files
+- Monitor 2: Claude Code terminal for work
+- Monitor 3: Browser for testing
+- Monitor 4 (optional): Documentation/references
+
+**VSCode/Cursor alongside Claude Code:**
+```
+Why keep IDE open:
+- Better file navigation and search
+- Quick reference to file structure
+- Copy relative file paths easily
+- Visual git diff viewing
+- Running formatters manually
+```
+
+**Benefit:** IDE for navigation + Claude Code for implementation = powerful combination.
+
+### Command-Line Tool Arsenal
+
+**Essential tools for Claude Code:**
+
+**1. PM2 (Process Manager)**
+- Manage multiple backend services
+- Automatic restarts on crash
+- Easy log access for Claude
+- Real-time monitoring
+
+**2. jq (JSON processor)**
+- Format JSON logs for readability
+- Extract specific fields from responses
+- Useful in scripts Claude generates
+
+**3. httpie or curl**
+- Test API endpoints
+- Quick request testing
+- Better than writing test code for every check
+
+**4. fd (Find replacement)**
+- Faster file finding
+- More intuitive than find
+- Great for codebase exploration
+
+**5. ripgrep (grep replacement)**
+- Incredibly fast code search
+- Respects .gitignore automatically
+- Powerful regex support
+
 ## Community Insights
 
 ### From r/ClaudeAI and Forums
@@ -1045,12 +1250,17 @@ Poor: <70% (Errors derail the conversation)
 
 > "The memory MCP server is underrated. It's like Claude has project-specific long-term memory now." - User testimonial
 
+> "SuperWhisper for voice-to-text when my hands are tired from typing. Claude understands my rambling voice-to-text surprisingly well." - Long-session user
+
+> "BetterTouchTool double-tap to focus Claude Code terminal changed my life. Small automation, huge impact." - macOS user
+
 ### Common Pitfalls Reported
 
 1. **Over-reliance on tools:** Asking Claude to search when you know the answer
 2. **Tool spam:** Claude making too many tool calls due to poor prompting
 3. **Security oversights:** Using untrusted MCP servers without review
 4. **Performance issues:** MCP servers with slow responses blocking workflow
+5. **Tool hoarding:** Installing tools you never use (start minimal, add as needed)
 
 ## Conclusion
 

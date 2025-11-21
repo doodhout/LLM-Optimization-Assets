@@ -555,27 +555,385 @@ Optional: Periodic comprehensive review with fresh Claude conversation
 
 **Code review should take: 20-30% of implementation time**
 
+## Advanced: Dev Docs System for Complex Tasks
+
+### The Problem: Claude Loses Track
+
+**Common scenario:**
+```
+Hour 1: Start implementing feature, everything on track
+Hour 2: Making good progress, handling edge cases
+Hour 3: Wait, what were we implementing again?
+Result: Realized Claude went on a tangent and lost the original plan
+```
+
+**Why it happens:**
+- Claude is like an "extremely confident junior dev with extreme amnesia"
+- Long conversations accumulate context
+- Original plan gets buried or forgotten
+- Auto-compaction wipes context
+- Easy to drift from original intent
+
+### The Solution: Persistent Dev Docs
+
+**Create a documentation trail for every large task:**
+
+```bash
+dev/
+└── active/
+    └── [task-name]/
+        ├── [task-name]-plan.md        # The accepted plan
+        ├── [task-name]-context.md     # Key files, decisions, integrations
+        └── [task-name]-tasks.md       # Checklist of work items
+```
+
+### Starting Large Tasks
+
+**Workflow:**
+
+**1. Enter Planning Mode**
+Even if you'll write the plan to markdown later, planning mode helps Claude:
+- Gather context more efficiently
+- Analyze project structure thoroughly
+- Create comprehensive plans
+- Research the codebase effectively
+
+**2. Review the Plan Thoroughly**
+- Take time to understand every part
+- Catch misunderstandings early
+- Verify Claude understood the requirements
+- Identify missing pieces
+
+**3. Create Dev Docs Structure**
+```bash
+mkdir -p ~/git/project/dev/active/[task-name]/
+```
+
+**4. Generate Three Core Documents**
+
+Using a custom slash command or directly with Claude:
+
+**`[task-name]-plan.md`:**
+```markdown
+# Feature: User Authentication System
+
+## Executive Summary
+Implement JWT-based authentication with refresh tokens
+
+## Phases
+### Phase 1: Core Auth Service
+- Password hashing utilities
+- Token generation and validation
+- Refresh token support
+
+### Phase 2: Middleware & Protection
+- Auth middleware
+- Route protection
+- Permission checking
+
+### Phase 3: API Endpoints
+- POST /auth/login
+- POST /auth/logout
+- POST /auth/refresh
+- GET /auth/me
+
+### Phase 4: Integration
+- Connect to existing routes
+- Error handling
+- Integration tests
+
+## Risks & Mitigations
+- Risk: Token expiry edge cases
+  Mitigation: Comprehensive test coverage
+
+## Success Metrics
+- All tests passing
+- Auth flow works end-to-end
+- Performance within 200ms
+
+## Timeline
+Estimated: 3-4 days (with testing)
+```
+
+**`[task-name]-context.md`:**
+```markdown
+# Context: User Authentication
+
+## Key Files
+- src/services/AuthService.ts - Core auth logic
+- src/middleware/auth.ts - Route protection
+- src/routes/auth.ts - Auth endpoints
+- src/models/User.ts - User model
+
+## Integration Points
+- Existing user management system
+- Database: PostgreSQL via Prisma
+- Email service for verification
+
+## Key Decisions
+- Decision: Use JWT over sessions
+  Reason: Better for distributed systems
+  Made: 2024-01-15
+
+- Decision: 1-hour token expiry
+  Reason: Security vs UX balance
+  Made: 2024-01-15
+
+## Dependencies
+- jsonwebtoken library
+- bcrypt for password hashing
+
+**Last Updated:** 2024-01-15 14:30
+```
+
+**`[task-name]-tasks.md`:**
+```markdown
+# Tasks: User Authentication
+
+## Phase 1: Core Auth Service
+- [ ] Implement password hashing utility
+- [ ] Implement token generation
+- [ ] Implement token validation
+- [ ] Add refresh token support
+- [ ] Write unit tests
+
+## Phase 2: Middleware
+- [ ] Create auth middleware
+- [ ] Add route protection
+- [ ] Write middleware tests
+
+## Phase 3: Endpoints
+- [ ] POST /auth/login
+- [ ] POST /auth/logout
+- [ ] POST /auth/refresh
+- [ ] GET /auth/me
+- [ ] Write endpoint tests
+
+## Phase 4: Integration
+- [ ] Connect to existing routes
+- [ ] Error handling
+- [ ] Integration tests
+- [ ] Documentation
+
+**Last Updated:** 2024-01-15 14:30
+```
+
+**5. Implement with Constant Reference**
+
+Throughout implementation:
+- Reference dev docs frequently
+- Update tasks as completed (immediately!)
+- Add new context/decisions as they emerge
+- Track next steps before running low on context
+
+### Continuing After Context Loss
+
+**When starting a fresh conversation:**
+
+```
+Human: "Continue working on user authentication.
+Read these files:
+- dev/active/user-auth/user-auth-plan.md
+- dev/active/user-auth/user-auth-context.md
+- dev/active/user-auth/user-auth-tasks.md
+
+Pick up where we left off."
+
+Claude: [Reads files, understands full context, continues seamlessly]
+```
+
+### Updating Dev Docs Before Compaction
+
+**When context is running low:**
+
+Create a slash command like `/update-dev-docs`:
+
+```markdown
+# .claude/commands/update-dev-docs.md
+Review the current task and update the dev docs:
+
+1. Mark completed tasks in [task-name]-tasks.md
+2. Add any new tasks discovered during implementation
+3. Update [task-name]-context.md with:
+   - New decisions made
+   - New integration points discovered
+   - Next steps for resuming work
+4. Update "Last Updated" timestamps
+
+Be specific about next steps so work can resume smoothly.
+```
+
+**Result:** Clean handoff to next conversation, no lost context.
+
+### Benefits of Dev Docs System
+
+**Before dev docs:**
+- Claude loses track during long tasks
+- Have to restart when context is lost
+- Difficult to resume after breaks
+- Tangents derail the original plan
+- Auto-compaction wipes critical context
+
+**After dev docs:**
+- Clear plan always available
+- Easy resume after breaks or compaction
+- Tangents get caught (compare to plan)
+- All decisions documented
+- Smooth handoffs between conversations
+
+**Community insight:**
+> "The dev docs system, out of everything besides skills, has made the most impact on results. Claude is like an extremely confident junior dev with extreme amnesia - this system addresses that perfectly." - 6-month production user
+
+### Pro Tips
+
+**1. Limit Scope Per Cycle**
+```
+Instead of:
+"Implement the entire plan"
+
+Do this:
+"Implement only Phase 1, sections 1-2. We'll do Phase 1 section 3 next."
+```
+
+**Benefit:** Get to review code between each set of tasks, catch issues early.
+
+**2. Have Claude Review Its Own Code**
+Between phases, launch a code review agent:
+- Catches critical errors early
+- Identifies missing implementations
+- Finds inconsistent code
+- Spots security flaws
+
+**3. Update Context During Implementation**
+Don't wait until end to document:
+```
+Human: "We just decided to use httpOnly cookies for refresh tokens.
+Add this decision to the context file."
+```
+
+**4. Create Slash Commands**
+Make the workflow repeatable:
+- `/dev-docs` - Create initial dev docs from plan
+- `/update-dev-docs` - Update before compaction
+- `/review-progress` - Review tasks and next steps
+
+## PM2 for Backend Debugging
+
+### The Problem with Backend Logs
+
+**When running multiple backend services:**
+- Claude can't see logs while services run
+- Manual copy-paste of logs is tedious
+- Services don't auto-restart on crashes
+- Difficult to debug real-time issues
+
+**Old approach:**
+```
+1. Run service manually
+2. Reproduce error
+3. Copy log output
+4. Paste into Claude
+5. Get analysis
+6. Make fix
+7. Restart service manually
+8. Repeat
+```
+
+### The Solution: PM2 Process Manager
+
+**PM2 gives you:**
+- All services run as managed processes
+- Each service has its own log file
+- Automatic restarts on crashes
+- Real-time monitoring
+- Easy log access for Claude
+
+**Setup:**
+
+```javascript
+// ecosystem.config.js
+module.exports = {
+  apps: [
+    {
+      name: 'api-gateway',
+      script: 'npm',
+      args: 'start',
+      cwd: './gateway',
+      error_file: './gateway/logs/error.log',
+      out_file: './gateway/logs/out.log',
+    },
+    {
+      name: 'auth-service',
+      script: 'npm',
+      args: 'start',
+      cwd: './auth',
+      error_file: './auth/logs/error.log',
+      out_file: './auth/logs/out.log',
+    },
+    {
+      name: 'email-service',
+      script: 'npm',
+      args: 'start',
+      cwd: './email',
+      error_file: './email/logs/error.log',
+      out_file: './email/logs/out.log',
+    },
+    // ... more services
+  ]
+};
+```
+
+**Start all services:**
+```bash
+pm2 start ecosystem.config.js
+```
+
+**New debugging workflow:**
+
+```
+Human: "The email service is throwing errors"
+
+Claude: [Runs pm2 logs email --lines 200]
+Claude: [Analyzes logs] "I see the issue - SMTP timeout on line 45..."
+Claude: [Makes fix to email service]
+Claude: [Runs pm2 restart email]
+Claude: [Checks logs again] "Service restarted successfully, monitoring for errors..."
+
+Result: Autonomous debugging without manual log management
+```
+
+**PM2 Commands Claude Can Use:**
+```bash
+pm2 logs <service-name> --lines 200   # Read recent logs
+pm2 restart <service-name>             # Restart service
+pm2 stop <service-name>                # Stop service
+pm2 start <service-name>               # Start service
+pm2 status                             # Show all services
+pm2 monit                              # Real-time monitoring
+```
+
+**Benefits:**
+- Claude can autonomously debug backend issues
+- No manual log fetching
+- Automatic service management
+- Easy monitoring of all services
+- Real-time log access
+
+**Caveat:**
+Hot reload doesn't work well with PM2, so consider running frontend separately with normal dev server if you need hot module replacement.
+
+**Community insight:**
+> "PM2 changed backend debugging completely. Claude can now read logs, identify issues, make fixes, and restart services autonomously. Night and day difference." - Production user
+
 ## Complete Workflow Examples
 
-### Workflow 1: New Feature Implementation
+### Workflow 1: Large Feature with Dev Docs
 
-**Scenario:** Implement a new API endpoint with database access
+**Scenario:** Implement complete user authentication system
 
-**Phase 1: Planning (10 minutes)**
+**Phase 1: Planning with Dev Docs (15 minutes)**
 ```
-Human: "I need to add a POST /api/users endpoint that creates users"
+Human: "Help me plan implementing user authentication"
+[Use planning mode]
 
-Claude: "Let me help you plan this. We'll need:
-1. Data model/schema validation
-2. Repository method for database access
-3. Service layer with business logic
-4. API endpoint handler
-5. Tests for each layer
-
-Let's break this into 4 implementation cycles:
-- Cycle 1: Model and validation
-- Cycle 2: Repository layer
-- Cycle 3: Service layer
-- Cycle 4: API endpoint
-
-Sound good?"
+Claude: [Creates comprehensive plan]

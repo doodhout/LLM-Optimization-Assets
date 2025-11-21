@@ -412,6 +412,302 @@ From r/ClaudeAI and other forums:
 4. **Measure impact** - Track whether specific rules improve outcomes
 5. **Get feedback** - Ask Claude "Is there conflicting information in your context?"
 
+## CLAUDE.md Evolution: From Monolith to Focused System
+
+### The Problem with Growing CLAUDE.md Files
+
+As projects grow, developers often experience this pattern:
+
+```
+Week 1: CLAUDE.md is 200 lines, works great
+Week 4: CLAUDE.md is 500 lines, still manageable
+Week 12: CLAUDE.md is 1,400 lines and trying to do too much
+Week 16: Claude starts ignoring parts of CLAUDE.md
+```
+
+**Signs your CLAUDE.md needs restructuring:**
+- File over 1,000 tokens
+- Mixing project-specific info with general best practices
+- Including detailed "how to code" guidelines
+- Duplicating framework documentation
+- Claude seems to ignore certain sections
+
+### The Modern Separation: CLAUDE.md vs Skills
+
+**The key insight:** Separate "how to write code" from "how this project works."
+
+**CLAUDE.md should contain:**
+- Project-specific configuration
+- Quick start commands
+- Service-specific information
+- Project architecture overview
+- Testing workflows specific to this project
+- Links to documentation
+
+**Skills should contain:**
+- Coding best practices
+- Framework patterns
+- Language standards
+- General development guidelines
+- Reusable coding knowledge
+
+**Example of good separation:**
+
+**CLAUDE.md** (200 lines):
+```markdown
+# My Project
+
+## Quick Commands
+- `pnpm pm2:start` - Start all backend services
+- `pnpm dev` - Start frontend dev server
+- `pnpm build` - Build all packages
+- `pnpm test` - Run test suite
+
+## Architecture
+- Frontend: React 19 + TanStack Router + MUI
+- Backend: 7 microservices (see /docs/architecture.md)
+- Database: PostgreSQL via Prisma
+- All services communicate via internal API
+
+## Project Structure
+- `/packages/frontend` - React application
+- `/packages/backend/*` - Microservices
+- `/packages/shared` - Shared utilities
+- `/docs` - Architecture docs
+
+## Testing Authenticated Routes
+Use: `node scripts/test-auth-route.js <url>`
+The script handles Keycloak auth automatically.
+
+## Development Workflow
+See: dev/workflow-guide.md
+```
+
+**backend-dev-guidelines SKILL** (300 lines + resources):
+```markdown
+# Backend Development Guidelines
+
+## Architecture Pattern
+Routes → Controllers → Services → Repositories
+
+## Best Practices
+- All async operations must have error handling
+- Use Prisma via repository pattern
+- Controllers extend BaseController
+- Services contain business logic only
+- [Progressive resources for details...]
+```
+
+### Multi-Level Documentation Structure
+
+**For large projects, implement tiered documentation:**
+
+**Level 1: CLAUDE.md (Navigation Hub)**
+```markdown
+# Project Root
+
+Quick commands and pointers to detailed docs
+
+## Documentation
+- Architecture: /docs/architecture/README.md
+- Frontend: /docs/frontend/README.md
+- Backend: /docs/backend/README.md
+- Database: /docs/database/README.md
+- Workflows: /dev/workflow-guide.md
+```
+
+**Level 2: Domain Documentation**
+```markdown
+# /docs/backend/README.md
+
+High-level backend architecture overview
+
+## Services
+- Auth Service: /docs/backend/auth-service.md
+- Email Service: /docs/backend/email-service.md
+- [More specific docs...]
+
+## Patterns
+See backend-dev-guidelines skill for coding patterns
+```
+
+**Level 3: Specific Component Docs**
+```markdown
+# /docs/backend/auth-service.md
+
+Detailed documentation of auth service:
+- How authentication flow works
+- Token generation and validation
+- Integration with Keycloak
+- Database schema
+- API endpoints
+```
+
+**Benefits of tiered structure:**
+- Claude loads only what's needed
+- Clear navigation path
+- Specific without overwhelming
+- Easy to maintain
+- Scalable to large projects
+
+**Community insight:**
+> "My CLAUDE.md was 1,400+ lines trying to do everything. I split it into a 200-line navigation hub + skills + tiered docs. Claude actually uses the information now and my context usage dropped significantly." - 6-month production user
+
+### Scripts as Documentation
+
+**Pattern: Attach utility scripts to documentation/skills**
+
+Instead of explaining complex processes, reference executable scripts:
+
+**In CLAUDE.md:**
+```markdown
+## Testing Authenticated Routes
+
+Use the provided script:
+```bash
+node scripts/test-auth-route.js http://localhost:3002/api/endpoint
+```
+
+The script handles:
+- Getting refresh token from Keycloak
+- Signing token with JWT secret
+- Creating cookie header
+- Making authenticated request
+```
+
+**In backend skill:**
+```markdown
+## Database Seeding
+
+Use the seeding script:
+```bash
+node scripts/seed-database.js --env dev
+```
+
+For custom seed data, see scripts/seed-templates/
+```
+
+**Benefits:**
+- Executable documentation (never out of date)
+- Claude knows exactly what script to use
+- No need to reinvent tools each time
+- Consistent across team
+- Testable and maintainable
+
+### Documentation Workflow
+
+**When to create vs update documentation:**
+
+**Create new documentation when:**
+- Starting a new major feature
+- Introducing new architecture pattern
+- Adding new service or component
+- Making significant design decisions
+
+**Update existing documentation when:**
+- Requirements change
+- Discovering better approaches
+- Finding inaccuracies
+- Adding examples
+
+**Keep documentation synchronized:**
+```
+Code change → Update relevant docs → Verify in CLAUDE.md navigation
+```
+
+**Use Claude to help:**
+```
+Human: "We just refactored the auth flow. Update /docs/backend/auth-service.md
+to reflect the new approach"
+
+Claude: [Reads current doc, reads new code, updates documentation]
+```
+
+### Progressive Documentation Loading
+
+**Pattern: Start broad, load details on demand**
+
+```
+Session start:
+  Load: CLAUDE.md (navigation)
+
+User asks about backend:
+  Load: /docs/backend/README.md (overview)
+  Load: backend-dev-guidelines skill (patterns)
+
+User asks about specific service:
+  Load: /docs/backend/auth-service.md (specifics)
+
+User implements feature:
+  Load: Relevant resource files from skill
+```
+
+**Benefits:**
+- Minimal tokens for general questions
+- Detailed info available when needed
+- Claude navigates documentation intelligently
+- Scales to very large projects
+
+**Community data:**
+> "Implemented tiered docs with 850+ markdown files. Claude navigates them efficiently by starting broad and loading specifics only when needed. Game changer for large codebases." - Production user
+
+### Migration Strategy
+
+**If your CLAUDE.md is too large:**
+
+**Step 1: Identify what to extract (30 minutes)**
+```markdown
+Review CLAUDE.md and categorize content:
+- [ ] Project commands → Keep in CLAUDE.md
+- [ ] General coding patterns → Move to skills
+- [ ] Architecture details → Move to /docs/architecture
+- [ ] Specific component info → Move to component docs
+- [ ] Testing guidelines → Partially to skill, specifics to docs
+```
+
+**Step 2: Create skills (1-2 hours)**
+```
+Extract general coding guidelines into:
+- frontend-dev-guidelines skill
+- backend-dev-guidelines skill
+- database-guidelines skill
+- etc.
+```
+
+**Step 3: Create documentation structure (1-2 hours)**
+```
+Create /docs/ hierarchy:
+- architecture/
+- frontend/
+- backend/
+- database/
+- workflows/
+```
+
+**Step 4: Rewrite CLAUDE.md as navigation (30 minutes)**
+```markdown
+Transform CLAUDE.md into lean navigation hub:
+- Quick commands
+- Links to documentation
+- Project-specific quirks
+- Testing instructions
+```
+
+**Step 5: Test and refine (ongoing)**
+```
+- Ask Claude about various topics
+- Verify it finds correct documentation
+- Refine navigation if needed
+- Update as project evolves
+```
+
+**Expected results:**
+- CLAUDE.md: 1,400 lines → 200 lines
+- Better organization
+- Claude actually uses the information
+- Easier to maintain
+- More scalable
+
 ## Conclusion
 
 The CLAUDE.md file is a powerful tool for shaping AI behavior, but it's most effective when:
@@ -419,5 +715,13 @@ The CLAUDE.md file is a powerful tool for shaping AI behavior, but it's most eff
 - Kept concise and current
 - Used for stable, session-independent guidance
 - Regularly maintained and refined
+- Part of a larger documentation strategy
 
-**The golden rule:** If you find yourself repeating the same guidance across multiple sessions, it probably belongs in CLAUDE.md. If it's specific to one task or changes frequently, keep it in your prompts.
+**The separation principle:**
+- **CLAUDE.md** = Project-specific navigation and commands
+- **Skills** = Reusable coding patterns and best practices
+- **Documentation** = Architecture, component details, and integration guides
+
+**The golden rule:** If you find yourself repeating the same guidance across multiple sessions, it probably belongs in CLAUDE.md or a skill. If it's specific to one task or changes frequently, keep it in your prompts. If it's detailed documentation, put it in /docs/ and reference it from CLAUDE.md.
+
+**The evolution path:** Start simple with basic CLAUDE.md. As the project grows, extract to skills and docs. Maintain CLAUDE.md as a lean navigation hub, not a knowledge dump.
