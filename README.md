@@ -82,6 +82,16 @@ Battle-tested development workflows:
 
 **Key insight:** Small, iterative changes with verification beats large implementations every time.
 
+#### 📋 [Spec-Driven Development](guides/workflows/spec-driven-development.md)
+Move from "vibe coding" to structured development with executable specifications:
+- What is SDD and why it matters with AI/LLMs
+- Tools: GitHub Spec Kit, Kiro, Tessl
+- Complete workflow examples (spec → plan → tasks → implementation)
+- Best practices and common pitfalls
+- Integration with TDD, code review, CI/CD
+
+**Key insight:** Specifications become executable with AI. Replace ad-hoc prompting with clear intent that generates predictable, testable code.
+
 #### ⚠️ [Common Mistakes](guides/advanced-topics/common-mistakes-and-how-to-avoid-them.md)
 Learn from others' mistakes:
 - The "vibe coding" trap
@@ -211,7 +221,8 @@ LLM-Optimization-Assets/
 │   ├── model-selection/               # Choosing the right model
 │   │   └── model-choice-best-practices.md
 │   ├── workflows/                     # Effective workflows
-│   │   └── effective-workflows.md
+│   │   ├── effective-workflows.md
+│   │   └── spec-driven-development.md
 │   └── advanced-topics/               # Advanced guides
 │       └── common-mistakes-and-how-to-avoid-them.md
 ```
