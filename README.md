@@ -17,8 +17,11 @@ Everything you need to know about creating effective CLAUDE.md files (also appli
 - Optimal file structure and size
 - Evidence-based recommendations
 - Token efficiency strategies
+- **Evolution strategy:** From monolith to focused navigation hub
+- Separation of concerns: CLAUDE.md vs Skills vs Documentation
+- Multi-level documentation structure
 
-**Key insight:** Keep it project-specific (300-500 tokens), not a copy of framework documentation.
+**Key insight:** Keep it project-specific (300-500 tokens), not a copy of framework documentation. Use CLAUDE.md as navigation hub, skills for patterns, /docs for details.
 
 #### 🤖 [Agent Definition Best Practices](guides/agents/agent-definition-best-practices.md)
 How to create specialized AI agents for specific tasks:
@@ -27,8 +30,11 @@ How to create specialized AI agents for specific tasks:
 - Input/output specifications
 - Examples and counter-examples
 - Quality standards and constraints
+- **Advanced:** Skills auto-activation with hooks
+- Progressive disclosure for efficiency
+- Production-tested agent examples
 
-**Key insight:** One focused agent beats one generalist every time.
+**Key insight:** One focused agent beats one generalist every time. Automate skill activation with hooks for consistent quality.
 
 #### 🧠 [Memory Management](guides/memory/memory-management-best-practices.md)
 Strategies for persistent knowledge across sessions:
@@ -59,8 +65,11 @@ Effective and secure use of tools and Model Context Protocol:
 - Game-changing tools and servers
 - Building secure MCP servers
 - Performance optimization
+- **Productivity tools:** Voice-to-text, automation, utility scripts
+- Command-line tool arsenal
+- Development environment enhancements
 
-**Key insight:** Audit MCP servers before use. Keep data local when possible.
+**Key insight:** Audit MCP servers before use. Keep data local when possible. Build a productivity system around Claude Code.
 
 #### 🎯 [Model Selection](guides/model-selection/model-choice-best-practices.md)
 Choosing the right model for each task:
@@ -78,9 +87,11 @@ Battle-tested development workflows:
 - Breaking tasks into manageable chunks
 - Continuous testing patterns
 - When to start fresh conversations
+- **Advanced:** Dev docs system for complex tasks
+- PM2 for backend debugging
 - Complete workflow examples
 
-**Key insight:** Small, iterative changes with verification beats large implementations every time.
+**Key insight:** Small, iterative changes with verification beats large implementations every time. Use dev docs to prevent Claude from losing track on large tasks.
 
 #### 📋 [Spec-Driven Development](guides/workflows/spec-driven-development.md)
 Move from "vibe coding" to structured development with executable specifications:
@@ -94,13 +105,16 @@ Move from "vibe coding" to structured development with executable specifications
 
 #### ⚠️ [Common Mistakes](guides/advanced-topics/common-mistakes-and-how-to-avoid-them.md)
 Learn from others' mistakes:
+- Understanding quality and consistency
+- The power of re-prompting
+- When to step in and fix it yourself
 - The "vibe coding" trap
 - Letting AI write too much at once
 - Context management failures
 - Security oversights
 - Technical debt accumulation
 
-**Key insight:** The 200-line rule - never let Claude write more than 200 lines without testing.
+**Key insight:** The 200-line rule - never let Claude write more than 200 lines without testing. Re-prompt when output is suboptimal. Sometimes just fix it yourself.
 
 ## Quick Start
 
