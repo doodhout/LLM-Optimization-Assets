@@ -103,6 +103,16 @@ Move from "vibe coding" to structured development with executable specifications
 
 **Key insight:** Specifications become executable with AI. Replace ad-hoc prompting with clear intent that generates predictable, testable code.
 
+#### ⚡ [Claude Skills](guides/skills/claude-skills-best-practices.md)
+Extend Claude with automatically-invoked modular capabilities:
+- What are Skills (vs slash commands, agents, MCP)
+- Creating effective skills with SKILL.md
+- Best practices for naming, descriptions, and structure
+- Progressive disclosure for scalability
+- Real-world examples and integration patterns
+
+**Key insight:** Define procedures once, Claude applies them automatically when relevant. Lazy-loaded context enables unbounded complexity.
+
 #### ⚠️ [Common Mistakes](guides/advanced-topics/common-mistakes-and-how-to-avoid-them.md)
 Learn from others' mistakes:
 - Understanding quality and consistency
@@ -237,6 +247,8 @@ LLM-Optimization-Assets/
 │   ├── workflows/                     # Effective workflows
 │   │   ├── effective-workflows.md
 │   │   └── spec-driven-development.md
+│   ├── skills/                        # Claude Skills
+│   │   └── claude-skills-best-practices.md
 │   └── advanced-topics/               # Advanced guides
 │       └── common-mistakes-and-how-to-avoid-them.md
 ```
