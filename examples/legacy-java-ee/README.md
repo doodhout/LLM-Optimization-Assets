@@ -207,6 +207,80 @@ This approach ensures high quality, well-tested, and maintainable code that adhe
 
 ---
 
+### 8. Architecture Planning Agent
+**Location:** `planning/architecture-planning-agent.md`
+
+**Purpose:** Plan new features or changes through deep requirements analysis and TDD-first design.
+
+**Key Capabilities:**
+- Ask clarifying questions to fully understand requirements
+- Validate user understanding through Socratic questioning
+- Identify use cases, edge cases, and error scenarios
+- Design comprehensive test plans BEFORE implementation
+- Create detailed, step-by-step implementation plans
+- Break down complex features into small increments
+- Assess risks and define mitigation strategies
+
+**Best For:**
+- Planning new features from requirements
+- Changing existing features safely
+- Ensuring all edge cases are considered
+- Creating TDD-first implementation roadmaps
+- Breaking complex work into manageable steps
+- Validating requirements completeness
+
+**Example Use Cases:**
+- Plan "User Favorites" feature with 20 implementation steps
+- Design test-first approach for payment processing
+- Break down complex reporting feature into increments
+- Identify edge cases for authentication system changes
+
+**Workflow:**
+1. Ask clarifying questions (validate understanding)
+2. Design test cases (TDD-first approach)
+3. Create architecture and implementation plan
+4. Review and get user approval
+
+---
+
+### 9. Feature Implementation Agent
+**Location:** `implementation/feature-implementation-agent.md`
+
+**Purpose:** Execute implementation plans in small, TDD-driven steps with continuous validation.
+
+**Key Capabilities:**
+- Execute plans step-by-step following strict TDD workflow
+- Work in very small increments (30-60 minute steps)
+- Follow Tests → Interfaces → Skeleton → Implementation sequence
+- Provide clear status updates after each step
+- Ensure tests pass after every change
+- Break down large steps automatically
+- Keep system in working state continuously
+
+**Best For:**
+- Implementing features from Architecture Planning Agent
+- Executing complex changes incrementally
+- Maintaining user oversight during implementation
+- Ensuring TDD discipline throughout development
+- Delivering working software in small increments
+
+**Example Use Cases:**
+- Implement UserFavorite entity with TDD (5 commits per step)
+- Build REST API endpoint following plan step-by-step
+- Add feature incrementally with continuous testing
+- Refactor large component in small, safe steps
+
+**Workflow (per step):**
+1. Write failing tests (RED)
+2. Define interfaces/signatures
+3. Create skeleton (empty methods)
+4. Implement to make tests pass (GREEN)
+5. Refactor and commit
+
+**Note:** Works in tandem with Architecture Planning Agent - use Planning Agent to create the plan, then Implementation Agent to execute it.
+
+---
+
 ## 🚀 How to Use These Agents
 
 ### Option 1: As Reference Material
