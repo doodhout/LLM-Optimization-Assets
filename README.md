@@ -240,6 +240,9 @@ LLM-Optimization-Assets/
 │   ├── context-efficiency/            # Context window optimization
 │   │   ├── context-window-efficiency.md
 │   │   └── context-window-efficiency-continued.md
+│   ├── context-window-management/     # Context window management strategies
+│   │   ├── dev-docs-pattern.md
+│   │   └── different-patterns-for-working-around-context-window-limits.md
 │   ├── tools-mcp/                     # Tools and MCP guides
 │   │   └── tools-and-mcp-best-practices.md
 │   ├── model-selection/               # Choosing the right model
